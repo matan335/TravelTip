@@ -8,8 +8,6 @@ import weatherService from './services/weather.service.js'
 
 
 locService.getLocs()
-    .then(locs => console.log('locs', locs))
-
 window.onload = () => {
     mapService.initMap()
         .then(
@@ -23,11 +21,10 @@ window.onload = () => {
 
     locService.getPosition()
         .then(pos => {
-            console.log('User position is:', pos.coords);
             let lat = pos.coords.latitude
             let lng = pos.coords.longitude
             let position = { lat: lat, lng: lng }
-            locService.codeLatLng(lat, lng)
+            locService.getLocationName(lat, lng)
             mapService.addMarker(position);
             mapService.centerMap(lat, lng)
             weatherService._connectWeaterApi(lat, lng)
@@ -38,27 +35,16 @@ window.onload = () => {
         })
 }
 
-document.querySelector('.btn1').onclick = () => {
-    console.log('Thanks!');
-}
-
-
-document.querySelector('.btn1').addEventListener('click', (ev) => {
-    console.log('Aha!', ev.target);
-})
-
 
 document.querySelector('#myForm').addEventListener('submit', function (e) {
-    debugger;
     let input = document.querySelector('.my-input')
     let value = input.value;
-    console.log('input is:', value)
+    let prmPos = locService.locationByString(value)
+    prmPos.then(function () {
 
-    //TODO get geocoder api
-    //TODO get wheather api
-    var searchBox = new google.maps.places.SearchBox(input)
-    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
+        // mapService.addMarker(prmPos)
+        // document.querySelector('#map').setCenter(prmPos);
+    })
 
     e.preventDefault();
 }, false);
@@ -66,12 +52,10 @@ document.querySelector('#myForm').addEventListener('submit', function (e) {
 document.querySelector('.my-location').addEventListener('click', (ev) => {
     locService.getPosition()
         .then(pos => {
-            console.log('User position is:', pos.coords);
-            debugger;
             let lat = pos.coords.latitude
             let lng = pos.coords.longitude
             let position = { lat: lat, lng: lng }
-            locService.codeLatLng(lat, lng)
+            locService.getLocationName(lat, lng)
             mapService.addMarker(position);
             mapService.centerMap(lat, lng)
             weatherService._connectWeaterApi(lat, lng)
@@ -79,5 +63,25 @@ document.querySelector('.my-location').addEventListener('click', (ev) => {
         })
 
 })
+document.querySelector('.send-my-location').addEventListener('click', (ev) => {
+    try {
 
+        locService.getPosition()
+            .then(pos => {
+                let lat = pos.coords.latitude
+                let lng = pos.coords.longitude
+                var dummy = document.createElement('textarea');
+                document.body.appendChild(dummy);
+                dummy.value = `https://matan335.github.io/TravelTip//index.html?lat=${lat}&lng=${lng}`
+                dummy.select();
+                document.execCommand("copy");
+                console.log('copyed')
+                // document.body.removeChild(dummy);
+
+            })
+    } catch{
+        console.log('Try again');
+
+    }
+})
 

@@ -1,12 +1,15 @@
-var locs = [{lat: 11.22, lng: 22.11}]
+import mapService from './map.service.js'
+import weatherService from './weather.service.js'
 
+
+var locs = [{ lat: 11.22, lng: 22.11 }]
 function getLocs1() {
     return Promise.resolve(locs);
 }
 
 function getLocs() {
-    return new Promise((resolve, reject)=>{
-        setTimeout(()=>{
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
             resolve(locs);
         }, 2000)
     });
@@ -15,27 +18,22 @@ function getLocs() {
 
 
 function getPosition() {
-    console.log('Getting Pos');
-    
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject)
     })
 }
 
 function getSearchedPosition() {
-    console.log('Getting Pos');
-    
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject)
     })
 }
 
-function codeLatLng(lat, lng) {
+function getLocationName(lat, lng) {
     var latlng = new google.maps.LatLng(lat, lng);
     var geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'latLng': latlng }, function (results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
-            console.log(results)
             document.querySelector('.location-name').innerText = 'Location:' + results[1].formatted_address
 
             if (results[1]) {
@@ -61,10 +59,30 @@ function codeLatLng(lat, lng) {
     });
 }
 
+function locationByString(address) {
+    const locApi_key = 'AIzaSyBUPOD44lhuNIREJESycpuEth_nQgadAgU'
+    var prm = fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${locApi_key}`);
+    return prm.then(function (res) {
+        var prmJ = res.json();
+        return prmJ.then(function (locationData) {
+            let location = {lat:locationData.results[0].geometry.location.lat,
+                lng:locationData.results[0].geometry.location.lng}
 
+            mapService.addMarker(location)
+            mapService.centerMap(location.lat,location.lng);
+            weatherService._connectWeaterApi(location.lat,location.lng)
+            getLocationName(location.lat,location.lng)
+
+            return location;
+
+        })
+    })
+
+}
 
 export default {
-    getLocs :getLocs,
-    getPosition: getPosition,
-    codeLatLng:codeLatLng
+    getLocs,
+    getPosition,
+    getLocationName,
+    locationByString
 }

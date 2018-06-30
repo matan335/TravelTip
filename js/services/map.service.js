@@ -2,7 +2,6 @@
 var map;
 
 function initMap(lat = 32.0749831, lng = 34.9120554) {
-    console.log('InitMap'); 
     return _connectGoogleApi()
     .then(() => {
         console.log('google available');
@@ -10,8 +9,11 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
             document.querySelector('#map'), {
                 center: { lat, lng },
                 zoom: 15
-            })
-        console.log('Map!', map);
+            }
+
+        )
+        document.querySelector('#map').style.width="95%"
+        document.querySelector('#map').style.margin="0 auto"
     })
 }
 
