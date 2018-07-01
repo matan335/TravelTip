@@ -5,11 +5,14 @@ function _connectWeaterApi(lat, lng) {
     return prm.then(function (res) {
         var prmJ = res.json();
         return prmJ.then(function (weatherdata) {
+            console.log(weatherdata)
             let elWeather=document.querySelector('.weather')
+            let weatherTemp=weatherdata.main.temp
             let weatherDesc = weatherdata.weather[0].description
             let weatherIcon = weatherdata.weather[0].icon
             let iconImg = `<img src="http://openweathermap.org/img/w/${weatherIcon}.png">`
-            let weatherText=`<div class="wather-container">${weatherDesc}<div>`
+            let weatherText=`<div class="wather-container">${weatherTemp}° ${weatherDesc}<div>`
+            let Temp=`<div class="wather-container"<div>`
             elWeather.innerHTML=weatherText+iconImg
 
             return weatherdata
