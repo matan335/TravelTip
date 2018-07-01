@@ -1,7 +1,7 @@
 
 function _connectWeaterApi(lat, lng) {
     const weatherKey = '8233b3e7a2782879208fb2d8bc97f60f'
-    var prm = fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&APPID=${weatherKey}&units=metric`);
+    var prm = fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&APPID=${weatherKey}&units=metric`);
     return prm.then(function (res) {
         var prmJ = res.json();
         return prmJ.then(function (weatherdata) {
